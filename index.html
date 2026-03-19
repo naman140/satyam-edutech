@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<!--
+=============================================================
+  SATYAM EDUTECH — FREE DEMO BOOKING LANDING PAGE
+  Production-ready | Single HTML file | Vercel-deployable
+=============================================================
+
+GOOGLE SHEETS INTEGRATION SETUP:
+─────────────────────────────────
+STEP 1: Create a Google Sheet with these column headers in Row 1:
+  A1: Timestamp  |  B1: Student Name  |  C1: Phone Number  |  D1: Class
+
+STEP 2: In the Sheet, go to Extensions > Apps Script and paste:
+
+  function doPost(e) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    sheet.appendRow([
+      new Date(),
+      data.name,
+      data.phone,
+      data.class
+    ]);
+    return ContentService
+      .createTextOutput(JSON.stringify({status: "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+STEP 3: Click Deploy > New Deployment > Web App
+  - Execute as: Me
+  - Who has access: Anyone
+  - Click Deploy, authorize, copy the Web App URL
+
+STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
+=============================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Satyam Edutech — Best Commerce Coaching in Durgapur | Book Free Demo</title>
+  <meta name="description" content="Join Durgapur's most trusted commerce coaching institute. 30+ years, only 6 students per batch, 1-on-1 mentorship with Seth Sir. Book your FREE demo class today." />
+  <meta property="og:title" content="Satyam Edutech — Best Commerce Coaching in Durgapur" />
+  <meta property="og:description" content="30+ years of excellence. Only 6 seats per batch. Book your FREE demo class now." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF6600;
+      --orange-light: #FFF0E6;
+      --orange-dark: #e55a00;
+      --bg: #ffffff;
+      --bg-alt: #F9F9F9;
+      --text: #1A1A1A;
+      --text-muted: #666666;
+      --border: #E5E5E5;
+      --green: #25D366;
+      --radius: 14px;
+      --font: 'Plus Jakarta Sans', sans-serif;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+      --shadow-md: 0 4px 24px rgba(0,0,0,0.10);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); color: var(--text); background: var(--bg); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── UTILITIES ─── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .badge { display: inline-block; background: var(--orange-light); color: var(--orange); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 100px; }
+    .section-label { text-align: center; margin-bottom: 12px; }
+    .section-title { font-size: clamp(24px, 4vw, 38px); font-weight: 800; text-align: center; color: var(--text); line-height: 1.2; margin-bottom: 14px; }
+    .section-sub { font-size: 17px; color: var(--text-muted); text-align: center; max-width: 600px; margin: 0 auto 48px; }
+    .orange { color: var(--orange); }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: #fff; font-family: var(--font); font-size: 16px; font-weight: 700; padding: 15px 28px; border-radius: 10px; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 18px rgba(255,102,0,0.35); }
+    .btn-primary:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,102,0,0.45); }
+    .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text); font-family: var(--font); font-size: 16px; font-weight: 700; padding: 14px 28px; border-radius: 10px; border: 2px solid var(--text); cursor: pointer; transition: all 0.2s; }
+    .btn-outline:hover { background: var(--text); color: #fff; }
+    .fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* ─── STICKY HEADER ─── */
+    #header { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { font-size: 22px; font-weight: 800; color: var(--orange); letter-spacing: -0.5px; }
+    .logo span { color: var(--text); font-weight: 500; }
+    .header-cta { font-size: 15px; padding: 10px 22px; }
+
+    /* ─── HERO ─── */
+    #hero { background: var(--bg); padding: 60px 0 56px; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: center; }
+    .hero-badge { margin-bottom: 18px; }
+    .hero h1 { font-size: clamp(28px, 4.5vw, 50px); font-weight: 800; line-height: 1.15; margin-bottom: 18px; }
+    .hero-sub { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; max-width: 520px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .trust-strip { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border); }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+    .trust-item::before { content: '✓'; color: var(--orange); font-weight: 800; }
+    /* Hero image placeholder */
+    .hero-image-block { background: var(--bg-alt); border: 2px dashed var(--border); border-radius: var(--radius); min-height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+    .hero-image-block .placeholder-icon { width: 80px; height: 80px; background: var(--orange-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 36px; }
+    .hero-image-block p { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
+    /* <!-- REPLACE: Replace .hero-image-block with an <img> tag pointing to Seth Sir's classroom photo --> */
+
+    /* ─── PROBLEM SECTION ─── */
+    #problem { padding: 72px 0; background: var(--bg-alt); }
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .pain-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .pain-card .icon { font-size: 28px; margin-bottom: 12px; }
+    .pain-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .pain-card p { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
+    .transition-line { text-align: center; font-size: 20px; font-weight: 700; color: var(--text); }
+    .transition-line span { color: var(--orange); }
+
+    /* ─── WHY SECTION ─── */
+    #why { padding: 80px 0; background: var(--bg); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; }
+    .feature-card { background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; transition: box-shadow 0.2s, transform 0.2s; }
+    .feature-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .feature-card .f-icon { width: 48px; height: 48px; background: var(--orange-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); }
+
+    /* ─── TESTIMONIALS ─── */
+    #testimonials { padding: 80px 0; background: var(--bg-alt); }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+    .testi-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); position: relative; }
+    .testi-card::before { content: '"'; position: absolute; top: 16px; right: 20px; font-size: 60px; color: var(--orange-light); font-family: Georgia, serif; line-height: 1; }
+    .testi-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--orange-light); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: var(--orange); margin-bottom: 14px; }
+    .testi-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .testi-tag { display: inline-block; background: var(--orange-light); color: var(--orange); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-bottom: 12px; }
+    .testi-quote { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ─── HOW IT WORKS ─── */
+    #how { padding: 80px 0; background: var(--bg); }
+    .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; position: relative; margin-bottom: 32px; }
+    .steps-row::before { content: ''; position: absolute; top: 36px; left: calc(16.66% + 24px); right: calc(16.66% + 24px); height: 2px; background: linear-gradient(90deg, var(--orange), var(--orange-light)); border-radius: 2px; }
+    .step { text-align: center; padding: 0 12px; }
+    .step-num { width: 72px; height: 72px; background: var(--orange); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; margin: 0 auto 18px; box-shadow: 0 4px 18px rgba(255,102,0,0.35); position: relative; z-index: 1; }
+    .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: var(--text-muted); }
+    .fee-note { background: var(--orange-light); border-radius: var(--radius); padding: 18px 24px; text-align: center; font-size: 15px; color: var(--text); max-width: 680px; margin: 0 auto; }
+
+    /* ─── STATS ─── */
+    #stats { padding: 56px 0; background: var(--orange); }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: clamp(36px, 5vw, 56px); font-weight: 800; color: #fff; line-height: 1; }
+    .stat-label { font-size: 15px; color: rgba(255,255,255,0.85); margin-top: 6px; font-weight: 500; }
+
+    /* ─── FORM SECTION ─── */
+    #form-section { padding: 80px 0; background: var(--bg-alt); }
+    .form-wrap { max-width: 560px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 44px; box-shadow: var(--shadow-md); border: 1px solid var(--border); }
+    .form-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; text-align: center; }
+    .form-sub { font-size: 15px; color: var(--text-muted); text-align: center; margin-bottom: 28px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .form-group input, .form-group select { width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--font); font-size: 15px; color: var(--text); background: #fff; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,102,0,0.12); }
+    .form-group input.error, .form-group select.error { border-color: #e53e3e; }
+    .form-error { font-size: 12px; color: #e53e3e; margin-top: 5px; display: none; }
+    .phone-wrap { position: relative; }
+    .phone-prefix { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 600; color: var(--text-muted); pointer-events: none; }
+    .phone-wrap input { padding-left: 46px; }
+    .btn-submit { width: 100%; padding: 16px; font-size: 17px; border-radius: 12px; margin-top: 8px; }
+    .form-trust { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 18px; }
+    .form-trust span { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .call-link { text-align: center; margin-top: 18px; font-size: 15px; color: var(--text-muted); }
+    .call-link a { color: var(--orange); font-weight: 700; }
+    /* Form states */
+    #form-loading, #form-success, #form-error-msg { display: none; text-align: center; padding: 24px 0; }
+    #form-success h3 { font-size: 22px; font-weight: 800; color: #1A1A1A; margin-bottom: 8px; }
+    #form-success p { color: var(--text-muted); font-size: 15px; }
+    #form-error-msg p { color: #e53e3e; font-size: 15px; }
+    .spinner { width: 44px; height: 44px; border: 4px solid var(--orange-light); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── FAQ ─── */
+    #faq { padding: 80px 0; background: var(--bg); }
+    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .faq-item { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .faq-q { width: 100%; background: none; border: none; padding: 22px 24px; font-family: var(--font); font-size: 16px; font-weight: 700; color: var(--text); text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; transition: background 0.2s; }
+    .faq-q:hover { background: var(--bg-alt); }
+    .faq-q .faq-icon { font-size: 20px; color: var(--orange); flex-shrink: 0; transition: transform 0.25s; }
+    .faq-a { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+    .faq-a p { font-size: 15px; color: var(--text-muted); padding-bottom: 20px; }
+    .faq-item.open .faq-a { max-height: 200px; }
+    .faq-item.open .faq-q { background: var(--bg-alt); }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ─── FINAL CTA ─── */
+    #final-cta { padding: 80px 0; background: var(--text); text-align: center; }
+    #final-cta h2 { font-size: clamp(24px, 4vw, 42px); font-weight: 800; color: #fff; margin-bottom: 14px; line-height: 1.2; }
+    #final-cta p { font-size: 17px; color: rgba(255,255,255,0.7); margin-bottom: 36px; }
+
+    /* ─── FOOTER ─── */
+    footer { background: #111; padding: 36px 0; }
+    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+    .footer-logo { font-size: 20px; font-weight: 800; color: var(--orange); }
+    .footer-info { font-size: 14px; color: rgba(255,255,255,0.5); text-align: right; }
+    .footer-info a { color: rgba(255,255,255,0.7); }
+
+    /* ─── WHATSAPP FLOAT ─── */
+    #wa-btn { position: fixed; bottom: 28px; right: 24px; width: 60px; height: 60px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,0.45); z-index: 999; animation: pulse-green 2.5s infinite; text-decoration: none; }
+    #wa-btn svg { width: 32px; height: 32px; fill: #fff; }
+    @keyframes pulse-green {
+      0%,100% { box-shadow: 0 4px 20px rgba(37,211,102,0.45); }
+      50% { box-shadow: 0 4px 32px rgba(37,211,102,0.75), 0 0 0 8px rgba(37,211,102,0.12); }
+    }
+
+    /* ─── MOBILE STICKY BAR ─── */
+    #mobile-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.97); backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding: 12px 20px; z-index: 800; }
+    #mobile-bar .btn-primary { width: 100%; justify-content: center; font-size: 17px; padding: 15px; border-radius: 12px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-image-block { min-height: 260px; }
+      .steps-row { grid-template-columns: 1fr; gap: 28px; }
+      .steps-row::before { display: none; }
+    }
+    @media (max-width: 768px) {
+      #mobile-bar { display: block; }
+      #wa-btn { bottom: 84px; }
+      .stats-row { grid-template-columns: 1fr; gap: 28px; }
+      .form-wrap { padding: 28px 20px; }
+      .trust-strip { gap: 14px; }
+      .section-sub { margin-bottom: 32px; }
+    }
+    @media (max-width: 480px) {
+      .hero-btns { flex-direction: column; }
+      .btn-primary, .btn-outline { width: 100%; justify-content: center; min-height: 52px; }
+      .footer-info { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── STICKY HEADER ─── -->
+<header id="header">
+  <div class="container header-inner">
+    <div class="logo">satyam <span>edutech</span></div>
+    <a href="#form-section" class="btn-primary header-cta">Book Free Demo</a>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content fade-in">
+        <div class="hero-badge">
+          <span class="badge">🔥 April Batch — Only 6 Seats Left</span>
+        </div>
+        <h1>Your Child Deserves the Best Commerce Teacher in <span class="orange">Durgapur.</span></h1>
+        <p class="hero-sub">30+ years of producing toppers. Small batches of just <strong>6 students</strong>. Personalized mentorship that builds careers, not just marks.</p>
+        <div class="hero-btns">
+          <a href="#form-section" class="btn-primary">Book Your FREE Demo Class →</a>
+          <a href="https://wa.me/919333327604?text=Hi%2C%20I%20want%20to%20book%20a%20demo%20class%20at%20Satyam%20Edutech" target="_blank" rel="noopener" class="btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp Us
+          </a>
+        </div>
+        <div class="trust-strip">
+          <div class="trust-item">30+ Years Experience</div>
+          <div class="trust-item">1000+ Students Mentored</div>
+          <div class="trust-item">Only 6 Per Batch</div>
+        </div>
+      </div>
+      <!-- REPLACE: Replace this placeholder block with an <img> tag of Seth Sir in the classroom -->
+      <div class="hero-image-block fade-in">
+        <div class="placeholder-icon">👨‍🏫</div>
+        <strong style="font-size:16px;color:var(--text);">Seth Sir in the Classroom</strong>
+        <p>Replace this block with a real photo of Seth Sir teaching his students</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROBLEM SECTION ─── -->
+<section id="problem">
+  <div class="container">
+    <div class="section-label fade-in"><span class="badge">The Reality</span></div>
+    <h2 class="section-title fade-in">Is Your Child Getting the Attention <span class="orange">They Deserve?</span></h2>
+    <p class="section-sub fade-in">Most coaching centres make big promises. The classroom reality is often very different.</p>
+    <div class="pain-grid">
+      <div class="pain-card fade-in">
+        <div class="icon">👥</div>
+        <h3>Overcrowded Classrooms</h3>
+        <p>Your child is just a number in a batch of 40+. No way to ask doubts, no personal attention.</p>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="icon">⏩</div>
+        <h3>Rushed Syllabus Coverage</h3>
+        <p>Teachers sprint through chapters to "finish" the syllabus — with no checks on real understanding.</p>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="icon">📚</div>
+        <h3>Rote Learning, Zero Career Guidance</h3>
+        <p>Coaching for marks alone. No one asks: what happens after Class 12? What's the career path?</p>
+      </div>
+      <div class="pain-card fade-in">
+        <div class="icon">❓</div>
+        <h3>Doubts Go Unanswered</h3>
+        <p>In large batches, raising your hand is embarrassing. Doubts pile up, confidence crumbles.</p>
+      </div>
+    </div>
+    <p class="transition-line fade-in">At Satyam Edutech, <span>we do things differently.</span></p>
+  </div>
+</section>
+
+<!-- ─── WHY SATYAM EDUTECH ─── -->
+<section id="why">
+  <div class="container">
+    <div class="section-label fade-in"><span class="badge">Why Choose Us</span></div>
+    <h2 class="section-title fade-in">Why <span class="orange">1000+ Families</span> Trust Seth Sir</h2>
+    <p class="section-sub fade-in">Three decades of teaching. One unwavering commitment: every student understands, not just memorizes.</p>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="f-icon">🏆</div>
+        <h3>30+ Years of Mastery</h3>
+        <p>Learn from one of Durgapur's most experienced commerce educators. Depth of knowledge no new tutor can match.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="f-icon">👤</div>
+        <h3>Only 6 Students Per Batch</h3>
+        <p>Every student gets personal attention, every doubt gets answered — in the same session, not later.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="f-icon">📖</div>
+        <h3>Complete Commerce Coverage</h3>
+        <p>Accounts, BST, Economics & Entrepreneurship under one roof. CBSE, ICSE, and WB Board.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="f-icon">🚀</div>
+        <h3>Beyond Marks</h3>
+        <p>Real-world case studies, career guidance, communication & leadership skills alongside academics.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="f-icon">📝</div>
+        <h3>Exam-Ready Preparation</h3>
+        <p>Regular mock tests with detailed performance analysis so your child always knows where they stand.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="f-icon">✅</div>
+        <h3>Ethical & Transparent</h3>
+        <p>No false promises, no hidden fees, no pressure. Just honest, effective education and real results.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-label fade-in"><span class="badge">Success Stories</span></div>
+    <h2 class="section-title fade-in">From Our Classroom to <span class="orange">Their Dream Career</span></h2>
+    <p class="section-sub fade-in">Real students. Real results. A tradition of excellence spanning 30+ years.</p>
+    <div class="testi-grid">
+      <div class="testi-card fade-in">
+        <div class="testi-avatar">C</div>
+        <div class="testi-name">CA Raja Kumar Sharma</div>
+        <span class="testi-tag">From CBSE to CA</span>
+        <p class="testi-quote">"Seth Sir's foundation made my CA journey possible. The concepts I learned in Class 11–12 still help me every single day."</p>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-avatar">P</div>
+        <div class="testi-name">Priya Banerjee</div>
+        <span class="testi-tag">Board Topper, Class 12</span>
+        <p class="testi-quote">"I scored 95% in Accounts and 92% in BST. Seth Sir made even the toughest chapters feel simple and logical."</p>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-avatar">A</div>
+        <div class="testi-name">Arjun Ghosh</div>
+        <span class="testi-tag">Top College Admit</span>
+        <p class="testi-quote">"I got into St. Xavier's College, Kolkata. The mock tests and personal mentorship gave me an edge no other tuition could."</p>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-avatar">S</div>
+        <div class="testi-name">Sneha Das</div>
+        <span class="testi-tag">Now at PwC</span>
+        <p class="testi-quote">"My parents were skeptical at first, but after the demo class, they knew this was different. Best decision we ever made."</p>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-avatar">R</div>
+        <div class="testi-name">Rohit Agarwal</div>
+        <span class="testi-tag">Score Transformation</span>
+        <p class="testi-quote">"Small batches meant Sir knew exactly where I was struggling. My Economics score jumped from 65 to 91 in just 4 months."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how">
+  <div class="container">
+    <div class="section-label fade-in"><span class="badge">The Process</span></div>
+    <h2 class="section-title fade-in">Getting Started is <span class="orange">Easy (And Free)</span></h2>
+    <p class="section-sub fade-in">No commitment, no fee discussion, no pressure. Just a chance to experience the difference firsthand.</p>
+    <div class="steps-row">
+      <div class="step fade-in">
+        <div class="step-num">1</div>
+        <h3>Book a Free Demo</h3>
+        <p>Fill the short form below. Takes less than 30 seconds. We'll call you to confirm your slot.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">2</div>
+        <h3>Experience the Class</h3>
+        <p>Attend a personalized 1-on-1 session with Seth Sir. See the teaching style for yourself.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">3</div>
+        <h3>Decide With Confidence</h3>
+        <p>If we're the right fit, we discuss the plan and fees together. Zero pressure, zero obligation.</p>
+      </div>
+    </div>
+    <p class="fee-note fade-in">💡 We believe you should <strong>experience the quality before discussing investment.</strong> That's why the demo is completely free — no strings attached.</p>
+  </div>
+</section>
+
+<!-- ─── STATS BAR ─── -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item fade-in">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">Years of Academic Excellence</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-num">1,000+</div>
+        <div class="stat-label">Students Mentored to Success</div>
+      </div>
+      <div class="stat-item fade-in">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Students Per Batch (Maximum)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FORM SECTION ─── -->
+<section id="form-section">
+  <div class="container">
+    <div class="section-label fade-in"><span class="badge">🔥 April Batch — 6 Seats Only</span></div>
+    <h2 class="section-title fade-in">Book Your <span class="orange">FREE Demo Class</span></h2>
+    <p class="section-sub fade-in">April batch starting soon — only 6 seats available. Reserve your child's spot now.</p>
+
+    <div class="form-wrap fade-in">
+      <!-- Form default state -->
+      <div id="form-default">
+        <h3 class="form-title">Reserve Your Free Spot</h3>
+        <p class="form-sub">No fees. No obligation. Just 30 seconds of your time.</p>
+        <!-- REPLACE: Update action URL with your Google Apps Script Web App URL -->
+        <form id="demo-form" novalidate>
+          <div class="form-group">
+            <label for="student-name">Student's Name</label>
+            <input type="text" id="student-name" name="name" placeholder="Your child's full name" autocomplete="name" />
+            <div class="form-error" id="name-error">Please enter the student's name.</div>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="phone-wrap">
+              <span class="phone-prefix">+91</span>
+              <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel-national" />
+            </div>
+            <div class="form-error" id="phone-error">Please enter a valid 10-digit phone number.</div>
+          </div>
+          <div class="form-group">
+            <label for="class-select">Class</label>
+            <select id="class-select" name="class">
+              <option value="">Select Class</option>
+              <option value="Class 11">Class 11</option>
+              <option value="Class 12">Class 12</option>
+            </select>
+            <div class="form-error" id="class-error">Please select the student's class.</div>
+          </div>
+          <button type="submit" class="btn-primary btn-submit" id="submit-btn">Book My Free Demo Class →</button>
+        </form>
+        <div class="call-link">📞 Prefer to talk? <a href="tel:+919333327604">Call us at +91 9333327604</a></div>
+        <div class="form-trust">
+          <span>✓ 100% Free Demo</span>
+          <span>✓ No Fees Discussion in Demo</span>
+          <span>✓ 1-on-1 Personalized Session</span>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="form-loading">
+        <div class="spinner"></div>
+        <p style="color:var(--text-muted);font-size:15px;">Booking your demo class...</p>
+      </div>
+
+      <!-- Success state -->
+      <div id="form-success">
+        <div style="font-size:52px;margin-bottom:16px;">🎉</div>
+        <h3>Demo Class Booked!</h3>
+        <p>We'll call you within 24 hours to confirm your slot.<br>Check WhatsApp for a confirmation message.</p>
+        <a href="https://wa.me/919333327604?text=Hi%2C%20I%20just%20booked%20a%20free%20demo%20class%20at%20Satyam%20Edutech!" target="_blank" rel="noopener" class="btn-primary" style="margin-top:22px;display:inline-flex;">Message Us on WhatsApp →</a>
+      </div>
+
+      <!-- Error state -->
+      <div id="form-error-msg">
+        <p>⚠️ Something went wrong. Please try again or call us at <a href="tel:+919333327604" style="color:var(--orange);font-weight:700;">+91 9333327604</a></p>
+        <button onclick="resetForm()" class="btn-outline" style="margin-top:16px;width:100%;justify-content:center;">Try Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label fade-in"><span class="badge">Questions Parents Ask</span></div>
+    <h2 class="section-title fade-in">We've Got <span class="orange">Answers</span></h2>
+    <p class="section-sub fade-in">Honest answers to the questions every parent asks before booking.</p>
+    <div class="faq-list">
+      <div class="faq-item fade-in">
+        <button class="faq-q" aria-expanded="false">
+          What's the fee structure?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We discuss fees after the demo class. We want you to experience our teaching quality first so you can make an informed decision. The demo is 100% free with no obligation whatsoever.</p></div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-q" aria-expanded="false">
+          Which boards do you cover?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We teach commerce subjects for CBSE, ICSE, and West Bengal Board — for both Class 11 and Class 12 students.</p></div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-q" aria-expanded="false">
+          How many students are in each batch?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Maximum 6 students per batch. This is non-negotiable — it's how we ensure every single student gets personal attention and no doubt goes unanswered.</p></div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-q" aria-expanded="false">
+          Where is the institute located?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We are based in Durgapur, West Bengal. The exact address and directions are shared after your demo is confirmed. We'll guide you through everything.</p></div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-q" aria-expanded="false">
+          Can my child join mid-session?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Yes, based on availability. Since we only take 6 students per batch, seats fill up fast. Book a free demo to check current openings and eligibility.</p></div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-q" aria-expanded="false">
+          What subjects do you teach?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We offer comprehensive commerce coaching in Accounts, Business Studies (BST), Economics, and Entrepreneurship — all under one roof, by one expert teacher.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─── -->
+<section id="final-cta">
+  <div class="container">
+    <h2 class="fade-in">Don't Let Your Child Settle for <span class="orange">Average Coaching</span></h2>
+    <p class="fade-in">Join Durgapur's most trusted commerce institute. April batch seats are filling fast — only 6 available.</p>
+    <a href="#form-section" class="btn-primary fade-in" style="font-size:18px;padding:18px 36px;">Book Free Demo Now →</a>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo">satyam edutech</div>
+    <div class="footer-info">
+      <div>Durgapur, West Bengal, India</div>
+      <div><a href="tel:+919333327604">+91 9333327604</a></div>
+      <div style="margin-top:4px;">© 2026 Satyam Edutech. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── WHATSAPP FLOAT BUTTON ─── -->
+<a id="wa-btn" href="https://wa.me/919333327604?text=Hi%2C%20I%20want%20to%20book%20a%20demo%20class%20at%20Satyam%20Edutech" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- ─── MOBILE STICKY BAR ─── -->
+<div id="mobile-bar">
+  <a href="#form-section" class="btn-primary">🎓 Book Free Demo — Only 6 Seats Left</a>
+</div>
+
+<script>
+// ── GOOGLE SHEETS ENDPOINT ──
+// REPLACE 'YOUR_GOOGLE_SCRIPT_URL' with your deployed Apps Script Web App URL
+const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL';
+
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ── MOBILE STICKY BAR: show after hero ──
+const heroSection = document.getElementById('hero');
+const mobileBar = document.getElementById('mobile-bar');
+const stickyObs = new IntersectionObserver((entries) => {
+  mobileBar.style.display = entries[0].isIntersecting ? 'none' : 'block';
+}, { threshold: 0.1 });
+stickyObs.observe(heroSection);
+
+// ── FAQ ACCORDION ──
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+    btn.setAttribute('aria-expanded', !isOpen);
+  });
+});
+
+// ── FORM VALIDATION & SUBMISSION ──
+const form = document.getElementById('demo-form');
+const submitBtn = document.getElementById('submit-btn');
+
+function showState(state) {
+  document.getElementById('form-default').style.display = state === 'default' ? 'block' : 'none';
+  document.getElementById('form-loading').style.display = state === 'loading' ? 'block' : 'none';
+  document.getElementById('form-success').style.display = state === 'success' ? 'block' : 'none';
+  document.getElementById('form-error-msg').style.display = state === 'error' ? 'block' : 'none';
+}
+
+function resetForm() {
+  form.reset();
+  showState('default');
+  submitBtn.disabled = false;
+}
+
+function setFieldError(fieldId, errorId, show) {
+  const field = document.getElementById(fieldId);
+  const errEl = document.getElementById(errorId);
+  if (show) {
+    field.classList.add('error');
+    errEl.style.display = 'block';
+  } else {
+    field.classList.remove('error');
+    errEl.style.display = 'none';
+  }
+}
+
+function validate() {
+  let valid = true;
+  const name = document.getElementById('student-name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const cls = document.getElementById('class-select').value;
+
+  const nameInvalid = name.length < 2;
+  const phoneInvalid = !/^\d{10}$/.test(phone);
+  const classInvalid = !cls;
+
+  setFieldError('student-name', 'name-error', nameInvalid);
+  setFieldError('phone', 'phone-error', phoneInvalid);
+  setFieldError('class-select', 'class-error', classInvalid);
+
+  if (nameInvalid || phoneInvalid || classInvalid) valid = false;
+  return valid;
+}
+
+// Clear errors on input
+['student-name', 'phone', 'class-select'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    el.classList.remove('error');
+    const errId = id === 'student-name' ? 'name-error' : id === 'phone' ? 'phone-error' : 'class-error';
+    document.getElementById(errId).style.display = 'none';
+  });
+});
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!validate()) return;
+
+  submitBtn.disabled = true;
+  showState('loading');
+
+  const payload = {
+    name: document.getElementById('student-name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    class: document.getElementById('class-select').value
+  };
+
+  // If no URL configured yet, show success anyway (dev mode)
+  if (SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL') {
+    setTimeout(() => showState('success'), 1200);
+    return;
+  }
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    // no-cors means we can't read the response; assume success
+    showState('success');
+  } catch (err) {
+    console.error(err);
+    showState('error');
+    submitBtn.disabled = false;
+  }
+});
+
+// Only allow digits in phone field
+document.getElementById('phone').addEventListener('keypress', (e) => {
+  if (!/[0-9]/.test(e.key)) e.preventDefault();
+});
+</script>
+</body>
+</html>
