@@ -291,36 +291,16 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
       font-weight: 800;
     }
 
-    /* Hero image placeholder */
-    .hero-image-block {
-      background: var(--bg-alt);
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      min-height: 360px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
-    }
-
-    .hero-image-block .placeholder-icon {
-      width: 80px;
-      height: 80px;
-      background: var(--orange-light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 36px;
-    }
-
-    .hero-image-block p {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 8px;
+    /* Hero image */
+    .hero-image {
+      width: 100%;
+      height: auto;
+      max-height: 520px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      border: 4px solid #fff;
     }
 
     /* <!-- REPLACE: Replace .hero-image-block with an <img> tag pointing to Seth Sir's classroom photo --> */
@@ -1079,12 +1059,7 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
             <div class="trust-item">Only 6 Per Batch</div>
           </div>
         </div>
-        <!-- REPLACE: Replace this placeholder block with an <img> tag of Seth Sir in the classroom -->
-        <div class="hero-image-block fade-in">
-          <div class="placeholder-icon">👨‍🏫</div>
-          <strong style="font-size:16px;color:var(--text);">Seth Sir in the Classroom</strong>
-          <p>Replace this block with a real photo of Seth Sir teaching his students</p>
-        </div>
+        <img src="images/hero_image.png" alt="Seth Sir in the Classroom" class="hero-image fade-in" />
       </div>
     </div>
   </section>
