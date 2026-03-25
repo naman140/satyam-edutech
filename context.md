@@ -24,6 +24,7 @@
 - Completed Lead validation and cleanup tasks from a generated list of leads.
 - Updated testimonial photos and names.
 - Setup phone number form formatting to ensure pasted inputs with country codes (e.g., `+91`) accurately extract and save only the local 10-digit phone number in Google Sheets.
+- Added duplicate form submission prevention based on phone number, checking via Google Sheets Apps Script and showing an error in the UI.
 
 ## Tracking & Architecture
 - **Meta Pixel**: The main page tracks `PageView`. The form redirects to `thankyou.html` on successful submission, where the explicit `Lead` event fires. This ensures accurate conversion tracking without overcounting button clicks.

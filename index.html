@@ -15,10 +15,23 @@ STEP 2: In the Sheet, go to Extensions > Apps Script and paste:
   function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = JSON.parse(e.postData.contents);
+    var phone = String(data.phone).trim();
+    
+    // Check for duplicate phone number
+    var dataRange = sheet.getDataRange();
+    var values = dataRange.getValues();
+    for (var i = 1; i < values.length; i++) {
+      if (String(values[i][2]).trim() === phone) {
+        return ContentService
+          .createTextOutput(JSON.stringify({status: "duplicate", message: "1 submission from 1 number"}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
     sheet.appendRow([
       new Date(),
       data.name,
-      data.phone,
+      phone,
       data.class
     ]);
     return ContentService
@@ -712,7 +725,8 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
     /* Form states */
     #form-loading,
     #form-success,
-    #form-error-msg {
+    #form-error-msg,
+    #form-duplicate-msg {
       display: none;
       text-align: center;
       padding: 24px 0;
@@ -730,7 +744,8 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
       font-size: 15px;
     }
 
-    #form-error-msg p {
+    #form-error-msg p,
+    #form-duplicate-msg p {
       color: #e53e3e;
       font-size: 15px;
     }
@@ -1334,6 +1349,14 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
           <button onclick="resetForm()" class="btn-outline"
             style="margin-top:16px;width:100%;justify-content:center;">Try Again</button>
         </div>
+
+        <!-- Duplicate state -->
+        <div id="form-duplicate-msg">
+          <h3 style="font-size:22px; font-weight:800; color:#1A1A1A; margin-bottom:8px;">Already Registered</h3>
+          <p>1 submission from 1 number.<br>This phone number has already been used to book a demo.</p>
+          <button onclick="resetForm()" class="btn-outline"
+            style="margin-top:16px;width:100%;justify-content:center;">Use a Different Number</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1485,6 +1508,7 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
       document.getElementById('form-loading').style.display = state === 'loading' ? 'block' : 'none';
       document.getElementById('form-success').style.display = state === 'success' ? 'block' : 'none';
       document.getElementById('form-error-msg').style.display = state === 'error' ? 'block' : 'none';
+      document.getElementById('form-duplicate-msg').style.display = state === 'duplicate' ? 'block' : 'none';
     }
 
     function resetForm() {
@@ -1553,12 +1577,23 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
       }
 
       try {
-        await fetch(SCRIPT_URL, {
+        const response = await fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
+        
+        try {
+          const result = await response.json();
+          if (result.status === 'duplicate') {
+            showState('duplicate');
+            submitBtn.disabled = false;
+            return;
+          }
+        } catch (parseErr) {
+          console.warn("Server response parsing failed, continuing", parseErr);
+        }
+
         // Redirect to thank you page so Meta Pixel Lead event tracks accurately
         window.location.href = 'thankyou.html';
       } catch (err) {
