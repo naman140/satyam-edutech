@@ -1598,6 +1598,8 @@ STEP 4: Replace YOUR_GOOGLE_SCRIPT_URL below (search for it in the JS section)
           console.warn("Server response parsing failed, continuing", parseErr);
         }
 
+        // Clear any previous lead tracking flag so the thank-you page fires it fresh
+        sessionStorage.removeItem('lead_tracked');
         // Redirect to thank you page so Meta Pixel Lead event tracks accurately
         window.location.href = 'thankyou.html';
       } catch (err) {
